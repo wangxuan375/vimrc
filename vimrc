@@ -83,8 +83,7 @@ elseif MyPlatform() == 'windows'
 	"Fast reloading of the _vimrc
 	map <silent> <leader>ss :source	~/_vimrc<cr>
 	"Fast editing of _vimrc
-	map <silent> <leader>ee	:call
-	SwitchToBuf("~/_vimrc")<cr>
+	map <silent> <leader>ee	:call SwitchToBuf("~/_vimrc")<cr>
 	"When _vimrc is
 	"edited, reload it
 	autocmd! bufwritepost _vimrc source ~/_vimrc
