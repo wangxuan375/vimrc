@@ -123,6 +123,9 @@ endif
 " For windows version
 if MyPlatform() == 'windows'
 	source $VIMRUNTIME/mswin.vim
+	source $VIMRUNTIME/delmenu.vim
+	source $VIMRUNTIME/menu.vim
+	language messages zh_CN.utf-8
 	behave mswin
 endif 
 
