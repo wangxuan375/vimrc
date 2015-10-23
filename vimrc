@@ -40,6 +40,38 @@ function! MyPlatform()
 	endif
 endfunction
 
+"Set to auto read when a file is changed from the outside
+if exists("&autoread")
+	set autoread
+endif
+
+"Have the mouse enabled all the time:
+set mouse=a
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Font
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Enable syntax hl
+if MyPlatform()=="linux"
+if v:version<600
+		if filereadable(expand("$VIM/syntax/syntax.vim"))
+			syntax on
+		endif
+	else
+		syntax on
+	endif
+else
+	syntax on
+endif
+
+"internationalization
+"I only work in Win2k Chinese version
+if has("multi_byte")
+	set termencoding=chinese
+	set encoding=utf-8
+	set fileencodings=ucs-bom,utf-8,chinese
+endif
+
 function! SwitchToBuf(filename)
 	"let fullfn = substitute(a:filename, '^\\~/', $HOME . '/', '')
 	" find in current tab
