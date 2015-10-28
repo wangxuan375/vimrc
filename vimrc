@@ -22,8 +22,12 @@ set number
 set cursorline
 set shiftwidth=4
 set tabstop=4
+set smartindent
+set guifont=Consolas:h12
 colorscheme desert
-sy on
+if &t_Co > 1
+	syntax enable
+endif
 
 " sessionoptions setting
 set sessionoptions+=slash
