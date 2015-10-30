@@ -27,13 +27,28 @@ set smartindent
 set guifont=Consolas:h12
 "show matching bracet
 set showmatch
+set autochdir
 colorscheme desert
 if &t_Co > 1
 	syntax enable
     syntax on
 endif
 
-function ClosePair(char)
+"打开文件类型检测功能
+filetype plugin indent on
+
+"括号、引号自动补全
+inoremap ( ()<Esc>i
+inoremap [ []<Esc>i
+inoremap { {<CR>}<Esc>O
+autocmd Syntax html,vim inoremap < <lt>><Esc>i| inoremap > <c-r>=ClosePair('>')<CR>
+inoremap ) <c-r>=ClosePair(')')<CR>
+inoremap ] <c-r>=ClosePair(']')<CR>
+inoremap } <c-r>=CloseBracket()<CR>
+inoremap " <c-r>=QuoteDelim('"')<CR>
+inoremap ' <c-r>=QuoteDelim("'")<CR>
+
+function! ClosePair(char)
  if getline('.')[col('.') - 1] == a:char
  return "\<Right>"
  else
@@ -41,7 +56,7 @@ function ClosePair(char)
  endif
 endf
 
-function CloseBracket()
+function! CloseBracket()
  if match(getline(line('.') + 1), '\s*}') < 0
  return "\<CR>}"
  else
@@ -49,7 +64,7 @@ function CloseBracket()
  endif
 endf
 
-function QuoteDelim(char)
+function! QuoteDelim(char)
  let line = getline('.')
  let col = col('.')
  if line[col - 2] == "\\"
@@ -64,16 +79,6 @@ function QuoteDelim(char)
  endif
 endf
 
-"括号、引号自动补全
-inoremap ( ()<Esc>i
-inoremap [ []<Esc>i
-inoremap { {<CR>}<Esc>O
-autocmd Syntax html,vim inoremap < <lt>><Esc>i| inoremap > <c-r>=ClosePair('>')<CR>
-inoremap ) <c-r>=ClosePair(')')<CR>
-inoremap ] <c-r>=ClosePair(']')<CR>
-inoremap } <c-r>=CloseBracket()<CR>
-inoremap " <c-r>=QuoteDelim('"')<CR>
-inoremap ' <c-r>=QuoteDelim("'")<CR>
 
 " sessionoptions setting
 set sessionoptions+=slash
@@ -89,6 +94,22 @@ function! MyPlatform()
 		return "linux"
 	endif
 endfunction
+
+""""""""""""""""""""""""""""""
+" Tag list (ctags)
+""""""""""""""""""""""""""""""
+if MyPlatform() == "windows"                "设定windows系统中ctags程序的位置
+let Tlist_Ctags_Cmd = 'F:\Vim\vim73\ctags'
+elseif MyPlatform() == "linux"              "设定linux系统中ctags程序的位置
+let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+endif
+let Tlist_Show_One_File = 1            "不同时显示多个文件的tag，只显示当前文件的
+let Tlist_Exit_OnlyWindow = 1          "如果taglist窗口是最后一个窗口，则退出vim
+let Tlist_Use_Right_Window = 1         "在右侧窗口中显示taglist窗口 
+
+if MyPlatform() == "windows"
+	autocmd GUIEnter * simalt ~x
+endif
 
 "Set to auto read when a file is changed from the outside
 if exists("&autoread")
@@ -178,6 +199,53 @@ if MyPlatform() == 'windows'
 	language messages zh_CN.utf-8
 	behave mswin
 endif 
+
+nnoremap <F2> :NERDTreeToggle<CR>
+nnoremap <F3> :TlistToggle<CR>
+
+map <silent> <leader>fw :call Search_Word()<CR>:copen<CR>
+function! Search_Word()
+	let w = expand("<cword>")
+	execute "vimgrep " . w . " **"
+endfunction
+
+""""""""""""""""""""""""""""""
+" BufExplorer
+""""""""""""""""""""""""""""""
+let g:bufExplorerDefaultHelp=0       " Do not show default help.
+let g:bufExplorerShowRelativePath=1  " Show relative paths.
+let g:bufExplorerSortBy='mru'        " Sort by most recently used.
+let g:bufExplorerSplitRight=0        " Split left.
+let g:bufExplorerSplitVertical=1     " Split vertically.
+let g:bufExplorerSplitVertSize = 30  " Split width
+let g:bufExplorerUseCurrentWindow=1  " Open in new window.
+let g:bufExplorerMaxHeight=10
+autocmd BufWinEnter \[Buf\ List\] setl nonumber 
+
+""""""""""""""""""""""""""""""
+" 集成 NERD Tree
+""""""""""""""""""""""""""""""
+"let g:NERDTree_title="NERDTree"
+
+"function! NERDTree_Start()
+"	exec 'NERDTree'
+"ndfunction
+
+"function! NERDTree_IsValid()
+"	return 1
+"endfunction
+
+
+""""""""""""""""""""""""""""""
+" winManager setting
+""""""""""""""""""""""""""""""
+let g:winManagerWindowLayout = "BufExplorer|FileExplorer,TagList"
+"let g:winManagerWindowLayout = "BufExplorer|NERDTree,TagList"
+let g:winManagerWidth = 30
+nmap <C-W><C-F> :FirstExplorerWindow<cr>
+nmap <C-W><C-B> :BottomExplorerWindow<cr>
+nmap <silent> <leader>wm :WMToggle<CR>
+
 
 "Fast reloading of the .vimrc
 "map <silent> <leader>ss :source ~/.vimrc<cr>
